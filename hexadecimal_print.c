@@ -20,7 +20,7 @@ int hexadecimal_print(va_list l, flags_t *f)
 	str = converter(num, 16, 1);
 	count = 0;
 
-	if (f->hash == 1 && str[0] != '0')
+	if (f->hashtag_flag == 1 && str[0] != '0')
 		count += _puts("0x");
 	count += _puts(str);
 
