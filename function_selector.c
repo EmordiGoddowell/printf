@@ -9,10 +9,9 @@
  *		or NULL if no match is found.
 **/
 
-int (*function_selector(char s))(va_list, parameters_t *)
+int (*function_selector(char s))(va_list, parameters_t *params)
 {
 	int flags;
-
 	register int i;
 
 	print_handler func_arr[] = {
@@ -29,10 +28,11 @@ int (*function_selector(char s))(va_list, parameters_t *)
 		{'r', reverse_string_print},
 		{'S', special_string_print},
 		{'p', pointer_address_print},
-		{'%', percent_symbol_print}
+		{'%', percent_symbol_print},
+		{'?', unknown_print}
 	};
 
-	flags = 14;
+	flags = 15;
 
 	for (i = 0; i < flags; i++)
 	{
