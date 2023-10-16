@@ -33,8 +33,7 @@ char *converter(unsigned long int num, int base, int lowercase)
 	do {
 		*--ptr = digit[num % base];
 		num /= base;
-	}
-	while (num != 0);
+	} while (num != 0);
 	{
 		return (ptr);
 	}
