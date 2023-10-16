@@ -12,6 +12,7 @@
 int (*function_selector(char s))(va_list, parameters_t *params)
 {
 	int flags;
+
 	register int i;
 
 	print_handler func_arr[] = {
