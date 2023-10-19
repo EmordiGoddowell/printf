@@ -1,4 +1,5 @@
 #include "main.h"
+#include <stdarg.h>
 
 /**
  * _printf - A custom implementation of the printf function
@@ -10,21 +11,19 @@
 
 int _printf(const char *format, ...)
 {
-	int sum = 0;
+	int sum;
 	va_list ap;
 	char *p, *start;
 
 	parameters_t params = PARAMS_INIT;
+	flags_t flags = {0};
+
+	sum = 0;
 
 	va_start(ap, format);
 
-	if (!format || (format[0] == '%' && !format[1]))
-		return (-1);
-	if (format[0] == '%' && format[1] == ' ' && !format[2])
-		return (-1);
 	for (p = (char *)format; *p; p++)
 	{
-		init_params(&params, ap);
 		if (*p != '%')
 		{
 			sum += _putchar(*p);
@@ -37,17 +36,30 @@ int _printf(const char *format, ...)
 		{
 			p++;
 		}
-		p = get_width(p, &params, ap);
-		p = get_precision(p, &params, ap);
-		if (get_modifier(p, &params))
+
+		p = (char *)get_width((const char *)p, &params, ap);
+		p = (char *)get_precision((const char *)p, &params, ap);
+
+		if (get_modifier((const char *)p, &params))
+		{
 			p++;
+		}
+
 		if (!get_specifier(p))
-			sum += print_from_to(start, p,
-					params.l_modifier || params.h_modifier ? p - 1 : 0);
+		{
+			sum += print_from_to(start, p);
+		}
 		else
-			sum += get_print_func(p, ap, &params);
+		{
+			int (*print_func)(va_list, flags_t*) = get_print_func(p);
+
+			if (print_func)
+			{
+				sum += print_func(ap, &flags);
+			}
+		}
 	}
-	_putchar(BUF_FLUSH);
+
 	va_end(ap);
 	return (sum);
 }
