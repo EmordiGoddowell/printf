@@ -10,7 +10,7 @@
 #define OUTPUT_BUF_SIZE 1024
 #define BUF_FLUSH -1
 
-#define PARAMS_INIT {0, 0, 0, 0, 0}
+#define PARAMS_INIT {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 #define FIELD_BUF_SIZE 50
 
@@ -46,9 +46,16 @@ typedef struct flags
  * @h_modifier: A flag for the 'h' modifier
  * @l_modifier: A flag for the 'l' modifier
  *
+ * @plus_flag: A flag for the plus sign
+ * @space_flag: A flag for the space character
+ * @hashtag_flag: A flag for the hashtag character
+ * @zero_flag: A flag for the zero character
+ * @minus_flag: A flag for the minus sign
+ *
  * Description: This structure holds various flags and parameters that are used
  * in a printf-like function to format and print data in different ways.
 **/
+
 typedef struct parameters
 {
 	unsigned int unsign             : 1;
@@ -56,6 +63,12 @@ typedef struct parameters
 	unsigned int precision;
 	unsigned int h_modifier         : 1;
 	unsigned int l_modifier         : 1;
+
+	unsigned int plus_flag          : 1;
+	unsigned int space_flag         : 1;
+	unsigned int hashtag_flag       : 1;
+	unsigned int zero_flag          : 1;
+	unsigned int minus_flag         : 1;
 } parameters_t;
 
 /**
@@ -80,7 +93,7 @@ typedef struct specifier
 /**
  * struct printHandler - a structure representing a print handler
  * print_handler - a type definition for a structure printHandler
- * @c: The format specifier as a character
+ * @specifier: The format specifier as a character
  * @f: A pointer to the function that handles
  *	the corresponding format specifier
  *
@@ -91,13 +104,13 @@ typedef struct specifier
 
 typedef struct printHandler
 {
-	char c;
+	const char *specifier;
 	int (*f)(va_list ap, flags_t *f);
 } print_handler;
 
 int _printf(const char *format, ...);
 char *converter(unsigned long int num, int base, int lowercase);
-int (*function_selector(char s))(va_list, parameters_t *params);
+int (*function_selector(const char *p))(va_list, flags_t *);
 int hexadecimal_print(va_list l, flags_t *f);
 int hexadecimal_uppercase_print(va_list l, flags_t *f);
 int binary_print(va_list l, flags_t *f);
@@ -116,5 +129,14 @@ int unknown_print(va_list l, flags_t *f);
 
 int _putchar(char c);
 int _puts(char *str);
+void init_params(parameters_t *params);
+int get_flag(const char *p, parameters_t *params);
+const char *get_width(const char *p, parameters_t *params, va_list ap);
+const char *get_precision(const char *p, parameters_t *params, va_list ap);
+const char *get_modifier(const char *p, parameters_t *params);
+int get_specifier(const char *p);
+int print_from_to(const char *start, const char *p);
+int (*get_print_func(const char *p))(va_list, flags_t *);
+
 
 #endif /* MAIN_H */
