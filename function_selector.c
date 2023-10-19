@@ -3,44 +3,39 @@
 /**
  * function_selector - a function that selects the
  *			appropriate function pointer
- * @s: the format specifier character
+ * @p: the format specifier character
  *
  * Return: a pointer to the appropriate printing function,
  *		or NULL if no match is found.
 **/
 
-int (*function_selector(char s))(va_list, parameters_t *params)
+int (*function_selector(const char *p))(va_list, flags_t *)
 {
-	int flags;
+	int i;
 
-	register int i;
-
-	print_handler func_arr[] = {
-		{'i', integer_print},
-		{'s', string_print},
-		{'c', character_print},
-		{'d', decimal_print},
-		{'u', unsigned_integer_print},
-		{'x', hexadecimal_print},
-		{'X', hexadecimal_uppercase_print},
-		{'b', binary_print},
-		{'o', octal_print},
-		{'R', rot13_encode_print},
-		{'r', reverse_string_print},
-		{'S', special_string_print},
-		{'p', pointer_address_print},
-		{'%', percent_symbol_print},
-		{'?', unknown_print}
+	print_handler specifiers[] = {
+		{"d", decimal_print},
+		{"i", integer_print},
+		{"u", unsigned_integer_print},
+		{"x", hexadecimal_print},
+		{"X", hexadecimal_uppercase_print},
+		{"o", octal_print},
+		{"b", binary_print},
+		{"s", string_print},
+		{"c", character_print},
+		{"p", pointer_address_print},
+		{"S", special_string_print},
+		{"r", reverse_string_print},
+		{"R", rot13_encode_print},
+		{"%", percent_symbol_print},
+		{NULL, NULL}
 	};
 
-	flags = 15;
-
-	for (i = 0; i < flags; i++)
+	for (i = 0; specifiers[i].specifier != 0; i++)
 	{
-		if (func_arr[i].c == s)
-		{
-			return (func_arr[i].f);
-		}
+		if (*specifiers[i].specifier == *p)
+			return (specifiers[i].f);
 	}
+
 	return (NULL);
 }
